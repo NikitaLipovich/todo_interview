@@ -2,48 +2,71 @@
 
 Modern full-stack TODO application built with NestJS and React.
 
+## 🚀 Quick Start Guide
+
+### 1. Clone Repository
+```bash
+git clone git@github.com:NikitaLipovich/todo_interview.git
+cd todo_interview
+```
+
+### 2. Build Docker Image
+```bash
+docker build -t todo-test .
+```
+
+### 3. Run Container
+```bash
+docker run -p 3000:3000 -p 5173:5173 todo-test
+```
+
+### 4. Access Application
+
+#### Frontend (React App)
+🌐 **Frontend URL:** [http://localhost:5173](http://localhost:5173)
+
+![Frontend UI](ui.png)
+
+#### Backend API Documentation (Swagger)
+📚 **Swagger API Docs:** [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+
+Swagger UI provides interactive API documentation where you can:
+- Browse all available endpoints
+- Test API requests directly in the browser
+- Explore data structures and request parameters
+- Get server response examples
+
+![Swagger API Documentation](swagger-api.png)
+
+![Swagger API Endpoints](swagger-api-2.png)
+
 ## 🏗️ Project Structure
 ```
-todo-platform/
+todo_interview/
 ├── backend/          # NestJS API server
-├── frontend/         # React application  
+├── frontend/         # React application with Vite
+├── Dockerfile        # Multi-stage Docker build
 ├── README.md         # Project documentation
 └── .gitignore        # Git ignore rules
 ```
 
-## Tech Stack
-- **Backend:** NestJS (TypeScript)
-- **Frontend:** React + Redux + TypeScript  
-- **Database:** SQLite with TypeORM
+## 🛠️ Tech Stack
+- **Backend:** NestJS (TypeScript), SQLite with TypeORM
+- **Frontend:** React + TypeScript, Tailwind CSS, Vite
 - **Documentation:** OpenAPI/Swagger
 - **Deployment:** Docker
 
-## 🚀 Quick Start
-
-### Backend Setup
-```bash
-cd backend
-yarn install
-yarn build
-yarn start
-```
-
-The API server runs on `http://localhost:3000`
-
-### API Documentation
-Swagger UI is available at: `http://localhost:3000/api-docs`
-
 ## 📋 API Endpoints
 
-### Tasks Management
-All endpoints are prefixed with `/api/tasks`
+Base URL: `http://localhost:3000`  
+All task endpoints are prefixed with `/api/tasks`
 
-#### Get Tasks
-```bash
+### Get Tasks
+```
 GET /api/tasks/list
 ```
 **Query Parameters:**
-- `status` (optional): Filter by task status (`in progress` or `completed`)
+- `status` (optional): Filter by status (`in progress` | `completed`)
 
 **Example:**
 ```bash
@@ -51,8 +74,8 @@ curl "http://localhost:3000/api/tasks/list"
 curl "http://localhost:3000/api/tasks/list?status=completed"
 ```
 
-#### Create Task
-```bash
+### Create Task
+```
 POST /api/tasks/create
 ```
 **Request Body:**
@@ -70,8 +93,8 @@ curl -X POST "http://localhost:3000/api/tasks/create" \
   -d '{"text": "Buy groceries", "status": "in progress"}'
 ```
 
-#### Update Task Status
-```bash
+### Update Task Status
+```
 PATCH /api/tasks/update
 ```
 **Request Body:**
@@ -89,8 +112,8 @@ curl -X PATCH "http://localhost:3000/api/tasks/update" \
   -d '{"id": 1, "status": "completed"}'
 ```
 
-#### Delete Task
-```bash
+### Delete Task
+```
 DELETE /api/tasks/delete
 ```
 **Request Body:**
@@ -111,67 +134,36 @@ curl -X DELETE "http://localhost:3000/api/tasks/delete" \
 - `in progress` - Task is being worked on
 - `completed` - Task is finished
 
-## �️ Database
+## 🗄️ Database
 - **Type:** SQLite
-- **File:** `backend/tasks.db` (auto-generated)
+- **Location:** `backend/tasks.db` (auto-created)
 - **ORM:** TypeORM with automatic synchronization
 
-##  Project Status
-✅ **Backend:** Complete
-- NestJS API with TypeORM
-- SQLite database
-- OpenAPI/Swagger documentation
-- CORS enabled for frontend integration
-
-✅ **Frontend:** Complete
-- React + TypeScript setup
-- Tailwind CSS styling
-- Full CRUD operations
-- Real-time API integration
-
-## 🛠️ Development
-
-### Frontend Development
-```bash
-cd frontend
-yarn install
-yarn dev  # Runs on http://localhost:5173
-```
+## 🛠️ Development Mode
 
 ### Backend Development
 ```bash
 cd backend
 yarn install
-yarn start:dev  # Runs with hot reload on http://localhost:3000
+yarn start:dev  # Hot reload on http://localhost:3000
 ```
 
-### Testing the API
-Use the included curl commands above or visit the Swagger UI at:
-`http://localhost:3000/api-docs`
-
-## 🐳 Docker Deployment
-
-### Build and Run with Docker
+### Frontend Development
 ```bash
-# Build the Docker image
-docker build -t todo-app .
-
-# Run the container
-docker run -p 3000:3000 -p 5173:5173 todo-app
+cd frontend
+yarn install
+yarn dev  # Vite dev server on http://localhost:5173
 ```
 
-### Access the Application
-- **Frontend:** http://localhost:5173
-- **Backend API:** http://localhost:3000
-- **API Documentation:** http://localhost:3000/api-docs
+## 🐳 Docker Architecture
 
-### Docker Build Process
-The Dockerfile uses multi-stage builds:
+The application uses multi-stage Docker builds:
+
 1. **Backend Build Stage:** Compiles TypeScript to JavaScript
-2. **Frontend Build Stage:** Builds React app for production
-3. **Production Stage:** Combines both builds in a lightweight image
+2. **Frontend Build Stage:** Builds React app for production  
+3. **Production Stage:** Serves both applications
 
-### Container Architecture
-- Backend runs on port 3000 (NestJS server)
-- Frontend runs on port 5173 (served as static files)
-- Both services start automatically when container runs
+**Container Services:**
+- Backend: NestJS server on port 3000
+- Frontend: Static files served on port 5173
+- Both services start automatically
