@@ -116,29 +116,62 @@ curl -X DELETE "http://localhost:3000/api/tasks/delete" \
 - **File:** `backend/tasks.db` (auto-generated)
 - **ORM:** TypeORM with automatic synchronization
 
-## 🛠️ Development
-
-### Backend Development
-```bash
-cd backend
-yarn start:dev  # Runs with hot reload
-```
-
-### Testing the API
-Use the included curl commands above or visit the Swagger UI at:
-`http://localhost:3000/api-docs`
-
-## 📁 Project Status
+##  Project Status
 ✅ **Backend:** Complete
 - NestJS API with TypeORM
 - SQLite database
 - OpenAPI/Swagger documentation
 - CORS enabled for frontend integration
 
-🚧 **Frontend:** Coming soon
-- React + Redux setup
-- TypeScript integration
+✅ **Frontend:** Complete
+- React + TypeScript setup
 - Tailwind CSS styling
+- Full CRUD operations
+- Real-time API integration
+
+## 🛠️ Development
+
+### Frontend Development
+```bash
+cd frontend
+yarn install
+yarn dev  # Runs on http://localhost:5173
+```
+
+### Backend Development
+```bash
+cd backend
+yarn install
+yarn start:dev  # Runs with hot reload on http://localhost:3000
+```
+
+### Testing the API
+Use the included curl commands above or visit the Swagger UI at:
+`http://localhost:3000/api-docs`
 
 ## 🐳 Docker Deployment
-Coming soon...
+
+### Build and Run with Docker
+```bash
+# Build the Docker image
+docker build -t todo-app .
+
+# Run the container
+docker run -p 3000:3000 -p 5173:5173 todo-app
+```
+
+### Access the Application
+- **Frontend:** http://localhost:5173
+- **Backend API:** http://localhost:3000
+- **API Documentation:** http://localhost:3000/api-docs
+
+### Docker Build Process
+The Dockerfile uses multi-stage builds:
+1. **Backend Build Stage:** Compiles TypeScript to JavaScript
+2. **Frontend Build Stage:** Builds React app for production
+3. **Production Stage:** Combines both builds in a lightweight image
+
+### Container Architecture
+- Backend runs on port 3000 (NestJS server)
+- Frontend runs on port 5173 (served as static files)
+- Both services start automatically when container runs
