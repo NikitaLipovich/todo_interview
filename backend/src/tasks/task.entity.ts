@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
 import { ApiProperty } from '@nestjs/swagger';
 
 export enum TaskStatus {
-  PENDING = 'pending',
+  IN_PROGRESS = 'in progress',
   COMPLETED = 'completed',
 }
 
@@ -22,11 +22,11 @@ export class Task {
   @ApiProperty({ 
     description: 'Current status of the task',
     enum: TaskStatus,
-    default: TaskStatus.PENDING
+    default: TaskStatus.IN_PROGRESS
   })
   @Column({
     type: 'text',
-    default: TaskStatus.PENDING
+    default: TaskStatus.IN_PROGRESS
   })
   status: TaskStatus;
 

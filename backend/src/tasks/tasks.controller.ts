@@ -6,7 +6,6 @@ import {
   Patch,
   Delete,
   Query,
-  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -16,20 +15,14 @@ import {
   ApiBody,
 } from '@nestjs/swagger';
 import { TasksService } from './tasks.service';
-import { CreateTaskDto, UpdateTaskDto, TaskResponseDto } from './tasks.dto';
-import { TaskStatus } from './task.entity';
+import { CreateTaskDto, UpdateTaskStatusDto } from './tasks.dto';
+import { Task, TaskStatus } from './task.entity';
 
-/**
- * Controller for managing tasks
- */
 @ApiTags('tasks')
 @Controller('api/tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
-  /**
-   * Get all tasks or filter by status
-   */
   @Get('list')
   @ApiOperation({ summary: 'Retrieve list of tasks' })
   @ApiQuery({
@@ -38,93 +31,53 @@ export class TasksController {
     enum: TaskStatus,
     description: 'Filter tasks by status',
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'List of tasks',
-    type: [TaskResponseDto],
-  })
-  async list(@Query('status') status?: TaskStatus) {
-    if (status) {
-      return await this.tasksService.findByStatus(status);
-    }
-    return await this.tasksService.findAll();
+  @ApiResponse({ status: 200, description: 'List of tasks', type: [Task] })
+  async list(@Query('status') status?: TaskStatus): Promise<Task[]> {
+    return this.tasksService.findAll(status);
   }
 
-  /**
-   * Create a new task
-   */
   @Post('create')
   @ApiOperation({ summary: 'Create a new task' })
   @ApiBody({ type: CreateTaskDto })
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'Task successfully created',
-    type: TaskResponseDto,
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Invalid task data',
-  })
-  async create(@Body() createTaskDto: CreateTaskDto) {
-    return await this.tasksService.create(createTaskDto);
+  @ApiResponse({ status: 201, description: 'Task created', type: Task })
+  async create(@Body() createDto: CreateTaskDto): Promise<Task> {
+    return this.tasksService.create(createDto);
   }
 
-  /**
-   * Update a task status
-   */
   @Patch('update')
   @ApiOperation({ summary: 'Update status of a task' })
-  @ApiBody({ 
-    schema: {
-      type: 'object',
-      properties: {
-        id: { type: 'number', example: 1 },
-        status: { enum: Object.values(TaskStatus), example: TaskStatus.COMPLETED }
-      }
-    }
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Task status updated',
-    type: TaskResponseDto,
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: 'Task not found',
-  })
-  async update(@Body() updateData: { id: number; status: TaskStatus }) {
-    return await this.tasksService.update(updateData.id, { status: updateData.status });
+  @ApiBody({ type: UpdateTaskStatusDto })
+  @ApiResponse({ status: 200, description: 'Task status updated', type: Task })
+  async update(@Body() updateDto: UpdateTaskStatusDto): Promise<Task> {
+    return this.tasksService.updateStatus(updateDto);
   }
 
-  /**
-   * Delete a task
-   */
   @Delete('delete')
   @ApiOperation({ summary: 'Delete a task' })
   @ApiBody({
+    description: 'Task ID to delete',
     schema: {
       type: 'object',
       properties: {
-        id: { type: 'number', example: 1 }
-      }
+        id: { 
+          type: 'number', 
+          description: 'The ID of the task to delete',
+          example: 1 
+        }
+      },
+      required: ['id']
     }
   })
   @ApiResponse({
-    status: HttpStatus.OK,
+    status: 200,
     description: 'Task deleted',
-    schema: { 
-      type: 'object',
-      properties: {
-        id: { type: 'number', example: 1 }
-      }
-    }
+    schema: { example: { id: 1 } },
   })
   @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
+    status: 404,
     description: 'Task not found',
   })
-  async remove(@Body('id') id: number) {
-    await this.tasksService.remove(id);
-    return { id };
+  async remove(@Body('id') id: number): Promise<{ id: number }> {
+    return this.tasksService.remove(id);
   }
 }
