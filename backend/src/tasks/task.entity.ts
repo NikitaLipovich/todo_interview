@@ -1,5 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+
+export enum TaskStatus {
+  PENDING = 'pending',
+  COMPLETED = 'completed',
+}
 
 /**
  * Task entity representing a TODO item
@@ -16,8 +21,20 @@ export class Task {
 
   @ApiProperty({ 
     description: 'Current status of the task',
-    enum: ['in progress', 'completed']
+    enum: TaskStatus,
+    default: TaskStatus.PENDING
   })
-  @Column()
-  status: 'in progress' | 'completed';
+  @Column({
+    type: 'text',
+    default: TaskStatus.PENDING
+  })
+  status: TaskStatus;
+
+  @ApiProperty({ description: 'Task creation timestamp' })
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @ApiProperty({ description: 'Task last update timestamp' })
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
